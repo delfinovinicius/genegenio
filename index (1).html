@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GeneGênio Lab 🧬 | Investigando os mistérios da hereditariedade</title>
+  <meta name="description" content="Protótipo de ambiente de aprendizagem com inteligência artificial para investigar genética no 9º ano do Ensino Fundamental.">
+  <meta name="theme-color" content="#0E1036">
+
+  <!-- Favicon em emoji (dispensa arquivo de imagem) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+
+  <!-- Fontes: Bricolage Grotesque (títulos) e Atkinson Hyperlegible (texto, criada para máxima legibilidade) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- =========================================================
+       ÍCONES CIENTÍFICOS (sprite SVG reutilizável com <use>)
+       ========================================================= -->
+  <svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g-avatar" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2F7BF5"/>
+        <stop offset="1" stop-color="#6A4CE0"/>
+      </linearGradient>
+
+      <!-- Avatar do GeneGênio -->
+      <symbol id="avatar" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="30" fill="url(#g-avatar)"/>
+        <path d="M22 12c0 11 20 10 20 20s-20 9-20 20M42 12c0 11-20 10-20 20s20 9 20 20" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".3"/>
+        <circle cx="25" cy="29" r="5" fill="#fff"/>
+        <circle cx="39" cy="29" r="5" fill="#fff"/>
+        <circle cx="26" cy="30" r="2.4" fill="#0E1036"/>
+        <circle cx="40" cy="30" r="2.4" fill="#0E1036"/>
+        <path d="M25 40q7 6 14 0" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+        <circle cx="50" cy="12" r="3" fill="#FFC857"/>
+      </symbol>
+
+      <!-- Ícones de traço (herdam a cor do texto) -->
+      <symbol id="i-dna" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9M9.5 6h5M10.5 9h3M10.5 15h3M9.5 18h5"/></g></symbol>
+      <symbol id="i-lupa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></g></symbol>
+      <symbol id="i-frasco" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3M7.5 15h9"/></g></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5" stroke-linecap="round"/></g></symbol>
+      <symbol id="i-diario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6"/></g></symbol>
+      <symbol id="i-bussola" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></g></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.2"/></g></symbol>
+      <symbol id="i-enviar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 12 20 4l-4 16-4-7z"/><path d="m12 13 8-9"/></g></symbol>
+      <symbol id="i-baixar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></g></symbol>
+      <symbol id="i-lixeira" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></g></symbol>
+    </defs>
+  </svg>
+
+  <!-- Atalho de acessibilidade para quem navega pelo teclado -->
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- =========================================================
+       CABEÇALHO
+       ========================================================= -->
+  <header class="topo">
+    <div class="topo__interno">
+      <a class="marca" href="#inicio">
+        <svg class="marca__icone" aria-hidden="true"><use href="#i-dna"/></svg>
+        <span class="marca__texto">
+          <span class="marca__nome">GeneGênio Lab <span aria-hidden="true">🧬</span></span>
+          <span class="marca__lema">Investigando os mistérios da hereditariedade</span>
+        </span>
+      </a>
+
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="menu-botao__barras" aria-hidden="true"></span>
+        Menu
+      </button>
+
+      <nav id="menu" class="menu" aria-label="Navegação principal">
+        <ul>
+          <li><a href="#inicio" data-link="inicio">Início</a></li>
+          <li><a href="#conversar" data-link="conversar">Conversar com GeneGênio</a></li>
+          <li><a href="#diario" data-link="diario">Diário de Bordo</a></li>
+          <li><a href="#missoes" data-link="missoes">Missões</a></li>
+          <li><a href="#sobre" data-link="sobre">Sobre o Projeto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- =========================================================
+         TELA 1: INÍCIO
+         ========================================================= -->
+    <section id="inicio" class="tela" aria-labelledby="t-inicio">
+      <div class="heroi">
+        <div class="heroi__texto">
+          <h1 id="t-inicio" class="revelar" style="--ordem:0" tabindex="-1">Olá, explorador(a)!</h1>
+          <p class="heroi__fala revelar" style="--ordem:1">
+            Eu sou GeneGênio. Nossa missão é investigar como a genética influencia os seres vivos
+            e compreender, com base na ciência, a diversidade humana.
+          </p>
+          <div class="heroi__acoes revelar" style="--ordem:2">
+            <a class="botao botao--primario" href="#conversar">
+              <svg aria-hidden="true"><use href="#i-chat"/></svg>
+              Começar a investigação
+            </a>
+            <a class="botao botao--contorno" href="#missoes">
+              <svg aria-hidden="true"><use href="#i-bussola"/></svg>
+              Ver as missões
+            </a>
+          </div>
+        </div>
+
+        <!-- Hélice de DNA animada (gerada pelo script.js) -->
+        <div class="heroi__visual revelar" style="--ordem:1" aria-hidden="true">
+          <div class="helice" id="helice"></div>
+          <svg class="heroi__avatar"><use href="#avatar"/></svg>
+        </div>
+      </div>
+
+      <!-- Cartões de apresentação -->
+      <div class="fichas">
+        <article class="ficha revelar" style="--ordem:3; --cor:#2F7BF5">
+          <div class="ficha__icone"><svg aria-hidden="true"><use href="#i-dna"/></svg></div>
+          <h2>O que é genética?</h2>
+          <p>É a parte da Biologia que estuda como as características passam de uma geração para outra e por que cada ser vivo é único. Essas informações ficam guardadas no DNA, dentro das nossas células.</p>
+          <button class="ficha__link" type="button" data-perguntar="O que é genética?">Perguntar ao GeneGênio</button>
+        </article>
+
+        <article class="ficha revelar" style="--ordem:4; --cor:#6A4CE0">
+          <div class="ficha__icone"><svg aria-hidden="true"><use href="#i-lupa"/></svg></div>
+          <h2>O que vamos investigar?</h2>
+          <p>DNA, genes e cromossomos; como as características são herdadas; e o que a ciência realmente diz sobre a diversidade humana.</p>
+          <a class="ficha__link" href="#missoes">Conhecer as missões</a>
+        </article>
+
+        <article class="ficha revelar" style="--ordem:5; --cor:#9B5DE5">
+          <div class="ficha__icone"><svg aria-hidden="true"><use href="#i-chat"/></svg></div>
+          <h2>Como funciona o GeneGênio?</h2>
+          <p>Ele não entrega respostas prontas. Faz perguntas, pede que você explique seu raciocínio e ajuda a testar hipóteses, como numa investigação de verdade.</p>
+          <a class="ficha__link" href="#conversar">Conversar agora</a>
+        </article>
+
+        <article class="ficha ficha--caderno revelar" style="--ordem:6; --cor:#E0A100">
+          <div class="ficha__icone"><svg aria-hidden="true"><use href="#i-diario"/></svg></div>
+          <h2>Diário de Bordo</h2>
+          <p>Todo cientista registra o caminho. Anote o que aprendeu, suas hipóteses, descobertas e dúvidas. Os registros ficam salvos neste aparelho.</p>
+          <a class="ficha__link" href="#diario">Abrir o diário</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         TELA 2: CONVERSAR COM GENEGÊNIO
+         ========================================================= -->
+    <section id="conversar" class="tela" aria-labelledby="t-conversar">
+      <div class="painel chat" id="chat">
+        <div class="chat__topo">
+          <svg class="chat__avatar" aria-hidden="true"><use href="#avatar"/></svg>
+          <div class="chat__identidade">
+            <h2 id="t-conversar" tabindex="-1">Conversar com GeneGênio</h2>
+            <p class="chat__status"><span class="chat__ponto" aria-hidden="true"></span>Agente de IA conectado</p>
+          </div>
+        </div>
+
+        <!-- Aviso que aparece quando o estudante chega pelo botão de uma missão -->
+        <p class="chat__aviso" id="chat-aviso" role="status" hidden></p>
+
+        <!-- Agente GeneGênio criado no Dify (incorporado por iframe).
+             Para trocar de agente, altere apenas o endereço em src. -->
+        <iframe
+          id="agente-iframe"
+          class="chat__iframe"
+          src="https://udify.app/agent/Rrkt9fZL0XmRdVXx"
+          title="Chat com o agente GeneGênio"
+          allow="microphone; clipboard-write"
+          loading="lazy"></iframe>
+
+        <p class="chat__dica">O GeneGênio é uma inteligência artificial e pode errar. Confira as informações com seu professor ou sua professora.</p>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         TELA 3: DIÁRIO DE BORDO
+         ========================================================= -->
+    <section id="diario" class="tela" aria-labelledby="t-diario">
+      <header class="tela__cabecalho">
+        <h2 id="t-diario" tabindex="-1">Diário de Bordo</h2>
+        <p>Registre sua investigação. Não precisa preencher tudo de uma vez: um bom diário cresce aos poucos.</p>
+      </header>
+
+      <div class="diario">
+        <form class="painel diario__form" id="diario-form" novalidate>
+          <div class="campo">
+            <label for="d-missao">Missão relacionada</label>
+            <select id="d-missao" name="missao">
+              <option value="">Investigação livre</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="d-aprendi">O que aprendi</label>
+            <textarea id="d-aprendi" name="aprendi" rows="3" placeholder="Hoje descobri que..."></textarea>
+          </div>
+          <div class="campo">
+            <label for="d-hipoteses">Hipóteses formuladas</label>
+            <textarea id="d-hipoteses" name="hipoteses" rows="3" placeholder="Eu acho que... porque..."></textarea>
+          </div>
+          <div class="campo">
+            <label for="d-descobertas">Descobertas realizadas</label>
+            <textarea id="d-descobertas" name="descobertas" rows="3" placeholder="Ao investigar, percebi que..."></textarea>
+          </div>
+          <div class="campo">
+            <label for="d-duvidas">Dúvidas que surgiram</label>
+            <textarea id="d-duvidas" name="duvidas" rows="3" placeholder="Ainda não entendi..."></textarea>
+          </div>
+          <div class="diario__acoes">
+            <button class="botao botao--primario" type="submit">Salvar</button>
+            <p class="status" id="diario-status" role="status"></p>
+          </div>
+        </form>
+
+        <div class="diario__registros">
+          <div class="registros__topo">
+            <h3>Registros salvos</h3>
+            <button class="botao botao--contorno botao--pequeno" id="diario-baixar" type="button">
+              <svg aria-hidden="true"><use href="#i-baixar"/></svg>
+              Baixar diário
+            </button>
+          </div>
+          <ol class="registros" id="diario-lista"></ol>
+          <p class="vazio" id="diario-vazio">Seu diário ainda está em branco. Preencha pelo menos um campo e toque em Salvar para criar o primeiro registro.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         TELA 4: MISSÕES
+         ========================================================= -->
+    <section id="missoes" class="tela" aria-labelledby="t-missoes">
+      <header class="tela__cabecalho">
+        <h2 id="t-missoes" tabindex="-1">Missões</h2>
+        <p>Siga a trilha. Cada missão traz um objetivo, uma pergunta investigativa e um espaço para suas anotações.</p>
+        <div class="progresso">
+          <p id="progresso-texto">0 de 4 missões concluídas</p>
+          <div class="progresso__barra" role="progressbar" aria-labelledby="progresso-texto" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">
+            <span id="progresso-preenchimento"></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- As missões são geradas pelo script.js a partir da lista MISSOES -->
+      <ol class="trilha" id="trilha"></ol>
+    </section>
+
+    <!-- =========================================================
+         TELA 5: SOBRE O PROJETO
+         ========================================================= -->
+    <section id="sobre" class="tela" aria-labelledby="t-sobre">
+      <article class="painel sobre">
+        <svg class="sobre__icone" aria-hidden="true"><use href="#i-info"/></svg>
+        <h2 id="t-sobre" tabindex="-1">Sobre o Projeto</h2>
+
+        <p>
+          O GeneGênio é um agente educacional: um programa de inteligência artificial com o qual os estudantes
+          conversam para investigar conceitos de genética do 9º ano do Ensino Fundamental.
+        </p>
+
+        <h3>Para que ele serve</h3>
+        <p>
+          O objetivo é apoiar a aprendizagem de genética por meio da curiosidade, da argumentação e da reflexão.
+          Em vez de fornecer respostas prontas, o GeneGênio devolve perguntas, pede justificativas e convida o
+          estudante a formular e testar hipóteses. As missões organizam esse percurso, do DNA à hereditariedade,
+          chegando à discussão sobre a diversidade humana e à crítica ao racismo científico.
+        </p>
+
+        <h3>Quem decide como ele se comporta</h3>
+        <p>
+          O comportamento do agente é planejado por professores: que perguntas fazer, quando oferecer uma pista,
+          quais fontes consultar e que cuidados éticos seguir. A tecnologia executa escolhas pedagógicas feitas
+          por pessoas.
+        </p>
+
+        <h3>Fins educacionais e de pesquisa</h3>
+        <p>
+          Este ambiente foi desenvolvido para fins educacionais e de pesquisa em Educação em Ciências. Esta é
+          versão em desenvolvimento, em que o GeneGênio responde com base em materiais didáticos selecionados
+          pelos professores.
+        </p>
+
+        <h3>Seus dados</h3>
+        <p>
+          As anotações do Diário de Bordo e das Missões ficam guardadas apenas no navegador deste aparelho.
+          Já as mensagens do chat são processadas por um serviço externo de inteligência artificial, por isso
+          não escreva seu nome completo, endereço, telefone ou outros dados pessoais na conversa. Se você usar um computador compartilhado, baixe seu diário e apague
+          os registros ao terminar.
+        </p>
+
+        <p class="sobre__aviso">
+          Lembre-se: inteligências artificiais podem errar. Confira as informações com seu professor ou sua
+          professora e com o livro didático.
+        </p>
+
+        <!-- Espaço para créditos (autoria, instituição, contato) -->
+      </article>
+    </section>
+
+  </main>
+
+  <footer class="rodape">
+    <p>GeneGênio Lab é um ambiente educacional de pesquisa. O GeneGênio é uma inteligência artificial e pode errar.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
