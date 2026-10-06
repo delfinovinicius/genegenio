@@ -17,7 +17,7 @@ O agente foi concebido no GPT Builder (ChatGPT) e está incorporado ao site em u
 ### No GPT Builder (ChatGPT)
 
 1. Acesse chatgpt.com, vá em "Explorar GPTs" e clique em "Criar".
-2. Na aba "Configurar", preencha nome, descrição e imagem (o mascote está na pasta `imagens`).
+2. Na aba "Configurar", preencha nome, descrição e imagem (o mascote é o arquivo `mascote-genegenio.png`).
 3. Cole no campo "Instruções" o conteúdo de `instrucoes-do-agente.md`, a partir da seção IDENTIDADE.
 4. Em "Conhecimento", envie os materiais da sua base (veja `base-de-conhecimento.md`).
 5. Cadastre os iniciadores de conversa listados no final das instruções.
